@@ -1,0 +1,29 @@
+{
+  "name": "advanced-auth",
+  "version": "1.0.0",
+  "description": "Создание сервера для продвинутой регистрации и авторизации пользователя с записью в БД",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "express",
+    "node-js",
+    "jwt",
+    "mongo-db"
+  ],
+  "author": "Stark <serj.elessar@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "mongodb": "^4.9.0",
+    "mongoose": "^6.5.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.19"
+  }
+}
