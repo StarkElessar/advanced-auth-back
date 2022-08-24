@@ -4,13 +4,14 @@ const uuid = require('uuid')
 const mailService = require('./mailService')
 const tokenService = require('./tokenService')
 const UserDto = require('../dtos/userDto')
+const ApiError = require('../exceptions/apiError')
 
 class UserService {
   async registration(email, password) {
     const candidate = await UserModel.findOne({ email })
 
     if (candidate) {
-      throw new Error(`Пользователь с таким почтовым адресом ${email} уже существует`)
+      throw ApiError.BadRequest(`Пользователь с таким почтовым адресом ${email} уже существует`)
     }
 
     const hashPassword = await bcrypt.hash(password, 6)
@@ -31,11 +32,62 @@ class UserService {
     const user = await UserModel.findOne({ activationLink })
 
     if (!user) {
-      throw new Error('Неккоректная ссылка активации')
+      throw ApiError.BadRequest('Неккоректная ссылка активации')
     }
 
     user.isActivated = true
     await user.save()
+  }
+
+  async login(email, password) {
+    const user = await UserModel.findOne({ email })
+    if (!user) {
+      throw ApiError.BadRequest('Пользователь с таким email не найден')
+    }
+
+    const isPasswordEquals = await bcrypt.compare(password, user.password)
+    if (!isPasswordEquals) {
+      throw ApiError.BadRequest('Неверный пароль')
+    }
+
+    const userDto = new UserDto(user)
+    const tokens = tokenService.generateTokens({ ...userDto })
+
+    await tokenService.saveToken(userDto.id, tokens.refreshToken)
+
+    return { ...tokens, userDto }
+  }
+
+  async logout(refreshToken) {
+    const token = await tokenService.removeToken(refreshToken)
+
+    return token
+  }
+
+  async refresh(refreshToken) {
+    if (!refreshToken) {
+      throw ApiError.UnAuthorizedError()
+    }
+    const userData = tokenService.validateRefreshToken(refreshToken)
+    const tokenFromDb = await tokenService.findToken(refreshToken)
+
+    if (!userData || !tokenFromDb) {
+      throw ApiError.UnAuthorizedError()
+    }
+
+    const user = await UserModel.findById(userData.id)
+    const userDto = new UserDto(user)
+    const tokens = tokenService.generateTokens({ ...userDto })
+
+    await tokenService.saveToken(userDto.id, tokens.refreshToken)
+
+    return { ...tokens, userDto }
+  }
+
+  async getAllUsers() {
+    const users = await UserModel.find() // фун-я find() без параметров возвращает всех пользователей из БД
+
+    return users
   }
 }
 
