@@ -16,7 +16,7 @@ class UserController {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
         secure: true,
-        sameSite: 'strict'
+        sameSite: 'none'
       })
 
       return res.json(userData)
@@ -34,7 +34,7 @@ class UserController {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
         secure: true,
-        sameSite: 'strict'
+        sameSite: 'none'
       })
 
       return res.json(userData)
@@ -76,7 +76,7 @@ class UserController {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
         secure: true,
-        sameSite: 'strict'
+        sameSite: 'none'
       })
 
       return res.json(userData)
