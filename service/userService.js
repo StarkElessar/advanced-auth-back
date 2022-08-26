@@ -55,7 +55,7 @@ class UserService {
 
     await tokenService.saveToken(userDto.id, tokens.refreshToken)
 
-    return { ...tokens, userDto }
+    return { ...tokens, user: userDto }
   }
 
   async logout(refreshToken) {
@@ -81,7 +81,7 @@ class UserService {
 
     await tokenService.saveToken(userDto.id, tokens.refreshToken)
 
-    return { ...tokens, userDto }
+    return { ...tokens, user: userDto }
   }
 
   async getAllUsers() {
